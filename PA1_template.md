@@ -7,41 +7,69 @@ output:
     keep_md: true
 ---
 
-```{r }
+
+```r
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Loading and preprocessing the data
 
-```{r loadingActivity} 
+
+```r
 activity = read.csv("activity.csv")
 ```
 
 ## What is the mean total number of steps taken per day?
-```{r histogram, dependson = activity}
+
+```r
 SumPerDay = tapply(activity$steps, activity$date, sum, na.rm=TRUE)
 hist(SumPerDay)
+```
+
+![](PA1_template_files/figure-html/histogram-1.png)<!-- -->
+
+```r
 mean(SumPerDay)
+```
+
+```
+## [1] 9354.23
+```
+
+```r
 median(SumPerDay)
+```
+
+```
+## [1] 10395
 ```
 
 ## What is the average daily activity pattern?
 Time series plot of the 5-minute interval and the average number 
 of steps taken, averaged across all days
-```{r timeseries, dependson = activity}
+
+```r
 MeanPerInterval = tapply(activity$steps, activity$interval, mean, na.rm=TRUE)
 plot(names(MeanPerInterval), MeanPerInterval, type="l")
 ```
 
+![](PA1_template_files/figure-html/timeseries-1.png)<!-- -->
+
 We will use the function $which.max$ to find the 5-minute interval across all the days in the dataset with the maximum average number of steps.
-```{r MaxAverageInterval, dependson = MeanPerInterval}
+
+```r
 names(which.max(MeanPerInterval))
+```
+
+```
+## [1] "835"
 ```
 
 ## Imputing missing values
 Calculate and report the number of missing values
 Fill in the missing values in the dataset, we will use the mean for that interval
-```{r imputing, dependson=activity, dependson=MeanPerInterval}
+
+```r
 # Counting number of missing values
 # Fill in the missing value with the Mean for that interval
 count=0
@@ -57,15 +85,35 @@ for (i in 1:nrow(activity))
     }
 }
 count
+```
 
+```
+## [1] 2304
+```
 
+```r
 # Make a histogram of the total number of steps each day
 # Calculate and report mean and median of the totals
 SumPerDayFilled = tapply(activityFilled$steps, activityFilled$date, sum)
 hist(SumPerDayFilled)
-mean(SumPerDayFilled)
-median(SumPerDayFilled)
+```
 
+![](PA1_template_files/figure-html/imputing-1.png)<!-- -->
+
+```r
+mean(SumPerDayFilled)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+median(SumPerDayFilled)
+```
+
+```
+## [1] 10766.19
 ```
 
 After looking at the mean and median with the filled values, they are very different from the non-filled values.
@@ -74,7 +122,8 @@ After looking at the mean and median with the filled values, they are very diffe
 ## Are there differences in activity patterns between weekdays and weekends?
 
 Creating a new factor variable indicating whether the date is a weekday or weekend
-```{r daysCalculations, dependson=activityFilled}
+
+```r
 activityFilled$dayFactor = ""
 for (i in 1:nrow(activityFilled))
 {
@@ -104,5 +153,6 @@ MeanPerIntervalFilledWeekend = tapply(activityFilledWeekend$steps, activityFille
 # Now Plot
 plot(names(MeanPerIntervalFilledWeekday), MeanPerIntervalFilledWeekday, type = "l", xlab = "Interval", ylab = "Mean", main = "Weekday")
 plot(names(MeanPerIntervalFilledWeekend), MeanPerIntervalFilledWeekend, type = "l", xlab = "Interval", ylab = "Mean", main = "Weekend")
-
 ```
+
+![](PA1_template_files/figure-html/daysCalculations-1.png)<!-- -->
